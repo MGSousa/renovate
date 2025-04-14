@@ -190,16 +190,16 @@ describe('util/yaml', () => {
       ]);
     });
 
-    it('should parse content with templates using colons in keys/values', () => {
+    it('should parse content with templates without quotes', () => {
       expect(
         parseYaml(
           codeBlock`
             myObject:
               aString: {{ value }}
-              {{ prefixKey }}anotherString: "value"
+              {{ prefixKey }}anotherString: value
             ---
             foo: {{ foo.bar }}
-            bar: "value{{ value }}:v2"
+            bar: value{{ value }}:v2
           `,
           { removeTemplates: true },
         ),
@@ -323,17 +323,17 @@ describe('util/yaml', () => {
       });
     });
 
-    it('should parse content with template using colons in keys/values', () => {
+    it('should parse content with template without quotes', () => {
       expect(
         parseSingleYaml(
           codeBlock`
             myObject:
               aString: {{value}}
-              {{prefixKey}}anotherString: "value"
+              {{prefixKey}}anotherString: value
               {% if test.enabled %}
               myNestedObject:
                 aNestedString: {{value}}
-                anotherNestedString: "value{{value}}:v2"
+                anotherNestedString: value{{value}}:v2
               {% endif %}
           `,
           { removeTemplates: true },
