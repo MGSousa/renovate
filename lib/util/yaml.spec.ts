@@ -189,6 +189,33 @@ describe('util/yaml', () => {
         },
       ]);
     });
+
+    it('should parse content with templates using colons in keys/values', () => {
+      expect(
+        parseYaml(
+          codeBlock`
+            myObject:
+              aString: {{ value }}
+              {{ prefixKey }}anotherString: "value"
+            ---
+            foo: {{ foo.bar }}
+            bar: "value{{ value }}:v2"
+          `,
+          { removeTemplates: true },
+        ),
+      ).toEqual([
+        {
+          myObject: {
+            aString: null,
+            anotherString: "value"
+          },
+        },
+        {
+          foo: null,
+          bar: "value:v2"
+        },
+      ]);
+    });
   });
 
   describe('load', () => {
@@ -291,6 +318,33 @@ describe('util/yaml', () => {
           aString: null,
           myNestedObject: {
             aNestedString: null,
+          },
+        },
+      });
+    });
+
+    it('should parse content with template using colons in keys/values', () => {
+      expect(
+        parseSingleYaml(
+          codeBlock`
+            myObject:
+              aString: {{value}}
+              {{prefixKey}}anotherString: "value"
+              {% if test.enabled %}
+              myNestedObject:
+                aNestedString: {{value}}
+                anotherNestedString: "value{{value}}:v2"
+              {% endif %}
+          `,
+          { removeTemplates: true },
+        ),
+      ).toEqual({
+        myObject: {
+          aString: null,
+          anotherString: "value",
+          myNestedObject: {
+            aNestedString: null,
+            anotherNestedString: "value:v2"
           },
         },
       });
